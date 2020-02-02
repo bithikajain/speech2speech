@@ -2,6 +2,10 @@
 ###############################################################################
 #               Required Imports
 #
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/..'))
+
 import matplotlib.pyplot as plt
 import math
 import pandas as pd
@@ -22,15 +26,12 @@ from scipy.signal import savgol_filter
 import pathlib
 import librosa.display
 import librosa
-import IPython.display as ipd  # To play sound in the notebook
 import numpy as np
 import json
 import argparse
+
 from speech2speech.data_preprocessing.load_data import *
 from speech2speech.models.model import Model
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/..'))
 
 
 #import yaml
@@ -134,8 +135,10 @@ training_loader, validation_loader = train_val_data_loaders(
 
 ###############################################################################
 ###############################################################################
-#           Create model
+#           Create model and optimizer
 #
 model = Model(args.num_hiddens, args.num_residual_layers, args.num_residual_hiddens,
               args.num_embeddings, args.embedding_dim,
               args.commitment_cost, speaker_dic, args.speaker_embedding_dim, args.decay).to(device)
+
+optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=False)
