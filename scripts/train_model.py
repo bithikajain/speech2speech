@@ -169,7 +169,7 @@ if args.verbose:
 ###############################################################################
 #              Train model
 #
-train_model(model, optimizer, args.num_epochs, training_loader, device)
+train_model(model, optimizer, args.num_epochs, training_loader, device, checkpoint_dir)
 
 if args.verbose:
     print("Model trained.")

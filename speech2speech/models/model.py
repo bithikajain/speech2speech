@@ -20,6 +20,7 @@ class Model(nn.Module):
         self.debug = debug
         self.speaker_dic = speaker_dic
         self.speaker_id = speaker_id
+        self.device = device
 
         self._encoder = Encoder(1, num_hiddens,
                                 num_residual_layers,
@@ -29,11 +30,11 @@ class Model(nn.Module):
                                       kernel_size=1,
                                       stride=1)
         self._vq_vae = VectorQuantizer(num_embeddings, embedding_dim,
-                                       commitment_cost, device)
+                                       commitment_cost, self.device)
         self._decoder = Decoder(embedding_dim,
                                 num_hiddens,
                                 num_residual_layers,
-                                num_residual_hiddens, speaker_dic, speaker_embedding_dim, device)
+                                num_residual_hiddens, speaker_dic, speaker_embedding_dim, self.device)
 
     def forward(self, x):
         if self.debug:

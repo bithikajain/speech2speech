@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, Dataset
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def spectrograms_to_torch_dataset(files_np, max_col=50):
+def spectrograms_to_torch_dataset(files_np, max_col):
     """
     Generates torch tensors for the spectrogram array and return
     them as a dataset

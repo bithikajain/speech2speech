@@ -12,10 +12,11 @@ import torch.nn.functional as F
 
 class Decoder(nn.Module):
     def __init__(self, in_channels, num_hiddens, num_residual_layers, num_residual_hiddens,
-                 speaker_dic, speaker_embedding_dim, verbose=False, debug=False):
+                 speaker_dic, speaker_embedding_dim, device,  verbose=False, debug=False):
         super(Decoder, self).__init__()
         self.verbose = verbose
         self.debug = debug
+        self.device = device
 
         self._embedding = nn.Embedding(len(speaker_dic), speaker_embedding_dim)
 
@@ -52,7 +53,7 @@ class Decoder(nn.Module):
             sys.stdout.flush()
 
         lookup_tensor = torch.tensor(
-            [speaker_dic[speaker_id]], dtype=torch.long).to(device)
+            [speaker_dic[speaker_id]], dtype=torch.long).to(self.device)
         if self.debug:
             print(
                 'shape of lookup_tensor in Decoder.forward',
