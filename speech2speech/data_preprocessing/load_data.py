@@ -17,7 +17,6 @@ def spectrograms_to_torch_dataset(files_np, max_col=50):
     Generates torch tensors for the spectrogram array and return
     them as a dataset
     """
-    max_col = args.time_length
     X_list = []
     Y_list = []
     for file in files_np:

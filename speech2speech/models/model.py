@@ -14,10 +14,12 @@ import torch.nn.functional as F
 
 class Model(nn.Module):
     def __init__(self, num_hiddens, num_residual_layers, num_residual_hiddens,
-                 num_embeddings, embedding_dim, commitment_cost, speaker_dic, speaker_embedding_dim, decay=0, verbose=False, debug=False):
+                 num_embeddings, embedding_dim, commitment_cost, speaker_dic, speaker_id, speaker_embedding_dim, decay, device, verbose=False, debug=False):
         super(Model, self).__init__()
         self.verbose = verbose
         self.debug = debug
+        self.speaker_dic = speaker_dic
+        self.speaker_id = speaker_id
 
         self._encoder = Encoder(1, num_hiddens,
                                 num_residual_layers,
@@ -31,7 +33,7 @@ class Model(nn.Module):
         self._decoder = Decoder(embedding_dim,
                                 num_hiddens,
                                 num_residual_layers,
-                                num_residual_hiddens, speaker_dic, speaker_embedding_dim)
+                                num_residual_hiddens, speaker_dic, speaker_embedding_dim, device)
 
     def forward(self, x):
         if self.debug:
@@ -43,7 +45,7 @@ class Model(nn.Module):
         if self.debug:
             print("quantized ", quantized.size())
             sys.stdout.flush()
-        x_recon = self._decoder(quantized, speaker_dic, speaker_id)
+        x_recon = self._decoder(quantized, self.speaker_dic, self.speaker_id)
 
         input_features_size = x.size(2)
         if self.debug:

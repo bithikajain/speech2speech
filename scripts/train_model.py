@@ -119,8 +119,9 @@ if args.verbose:
 #              Load dataset
 #
 files_np = list(glob.glob(os.path.join(args.spectrogram_dir, '*.*')))
-tensordataset = spectrograms_to_torch_dataset(files_np, max_col)
+tensordataset = spectrograms_to_torch_dataset(files_np, args.time_length)
 speaker_dic = speaker_id_dic(files_np)
+speaker_id = '260'
 
 if args.verbose:
     print("Loaded data...")
@@ -152,7 +153,7 @@ if args.verbose:
 # Initialize model
 model = Model(args.num_hiddens, args.num_residual_layers, args.num_residual_hiddens,
               args.num_embeddings, args.embedding_dim,
-              args.commitment_cost, speaker_dic, args.speaker_embedding_dim, args.decay).to(device)
+              args.commitment_cost, speaker_dic, speaker_id, args.speaker_embedding_dim, args.decay, device).to(device)
 
 if args.verbose:
     print("Initialized model...")
@@ -168,7 +169,7 @@ if args.verbose:
 ###############################################################################
 #              Train model
 #
-train_model(model, optimizer, args.num_epochs, training_loader)
+train_model(model, optimizer, args.num_epochs, training_loader, device)
 
 if args.verbose:
     print("Model trained.")
