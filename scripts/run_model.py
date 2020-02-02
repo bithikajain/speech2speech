@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 ###############################################################################
 ###############################################################################
 #               Required Imports
@@ -33,9 +34,7 @@ import argparse
 from speech2speech.data_preprocessing.load_data import *
 from speech2speech.models.model import Model
 
-
 #import yaml
-
 
 ###############################################################################
 ###############################################################################
@@ -96,7 +95,8 @@ args = parser.parse_args()
 
 ###############################################################################
 ###############################################################################
-# Set paths that you will use in this notebook
+#              Set paths
+#
 checkpoint_dir = os.path.join(args.base_dir, 'checkpoints')
 plot_dir = os.path.join(args.base_dir, 'plots')
 output_dir = os.path.join(args.base_dir, 'output')
@@ -105,40 +105,60 @@ os.system("mkdir -p {} {} {} {} {}".format(args.base_dir,
                                            checkpoint_dir,
                                            plot_dir,
                                            output_dir))
+
 if args.verbose:
     print("Made required directories...")
     sys.stdout.flush()
 
 ###############################################################################
 ###############################################################################
-#                   Load dataset
+#              Load dataset
 #
 files_np = list(glob.glob(os.path.join(args.spectrogram_dir, '*.*')))
-
 tensordataset = spectrograms_to_torch_dataset(files_np, max_col)
 speaker_dic = speaker_id_dic(files_np)
-###############################################################################
-###############################################################################
-#                   Split data into train, test and validation
-#
 
+if args.verbose:
+    print("Loaded data...")
+    sys.stdout.flush()
+###############################################################################
+###############################################################################
+#              Split data into train, test and validation
+#
 train_dataset, val_dataset, test_dataset = split_dataset(
     tensordataset, args.train_data_fraction, args.validation_data_fraction)
 
+if args.verbose:
+    print("Split data into training, testing and validation sets...")
+    sys.stdout.flush()
 ###############################################################################
 ###############################################################################
-#               Data Loaders
+#              Data Loaders
 #
-
 training_loader, validation_loader = train_val_data_loaders(
     train_dataset, val_dataset, args.batch_size)
 
+if args.verbose:
+    print("Created dataset loaders...")
+    sys.stdout.flush()
 ###############################################################################
 ###############################################################################
-#           Create model and optimizer
+#              Create model and optimizer
 #
 model = Model(args.num_hiddens, args.num_residual_layers, args.num_residual_hiddens,
               args.num_embeddings, args.embedding_dim,
               args.commitment_cost, speaker_dic, args.speaker_embedding_dim, args.decay).to(device)
 
+if args.verbose:
+    print("Initialized model...")
+    sys.stdout.flush()
+
 optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=False)
+
+if args.verbose:
+    print("Initialized optimizer...")
+    sys.stdout.flush()
+###############################################################################
+###############################################################################
+#              Train model
+#
