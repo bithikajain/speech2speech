@@ -72,8 +72,8 @@ parser.add_argument('--num-epochs', type=int,
                     default=20, help='number of epochs(default:20)')
 parser.add_argument('--batch-size', type=int,
                     default=10, help='batch size (default:10)')
-parser.add_argument('--num-training-updates', type=int,
-                    default=15000)
+#parser.add_argument('--num-training-updates', type=int,
+#                    default=15000)
 parser.add_argument('--num-hiddens', type=int,
                     default=768)
 parser.add_argument('--num-residual-hiddens', type=int,
@@ -157,7 +157,7 @@ model = Model(args.num_hiddens, args.num_residual_layers, args.num_residual_hidd
 if args.verbose:
     print("Initialized model...")
     sys.stdout.flush()
-    
+
 # Initialize optimizer
 optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=False)
 
