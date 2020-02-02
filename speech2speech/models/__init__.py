@@ -1,3 +1,6 @@
+#
+# Copyright (C) 2020 Bithika Jain
+#
 from speech2speech.models.residual_stack import *
 from speech2speech.models.residual import *
 from speech2speech.models.decoder import *

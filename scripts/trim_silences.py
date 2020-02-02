@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2020 Bithika Jain
+#
+#
+# =============================================================================
+#
+#                                   Preamble
+#
+# =============================================================================
+#
 """Trim silence in audio files and optionally normalize them. Can be asymmetric.
 By default leaves 150ms of silence at beginning and end.  Meant for mono audio;
 if given stereo, silently converts to mono.  Window size and hop length of

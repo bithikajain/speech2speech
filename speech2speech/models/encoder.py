@@ -1,3 +1,6 @@
+#
+# Copyright (C) 2020 Bithika Jain
+#
 from .residual_stack import ResidualStack
 
 import sys
