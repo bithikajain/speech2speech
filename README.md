@@ -2,7 +2,7 @@
 This is a consulting project for Respeecher done as part of Insight Artificial Intelligence Fellowship. 
 
 ## Background 
-Voice conversion is a widely useful technology which can boost creative possibilities, multiply employment opportunities and benefit people with speech impediments.  Creating high quality speech content is a new and  challenging technology chiefly because of lack of affordable, production quality voice data for developing new speech conversion algorithms. We develop a speech synthesis pipeline which learns high-level speech descriptors  and extracts speaker representation allowing speaker conversion. This framework obtains significantly high similarity and naturalness to human voice. 
+Voice conversion is a widely useful technology which can boost creative possibilities, multiply employment opportunities and benefit people with speech impediments.  Creating high quality speech content is a new and  challenging technology chiefly because of lack of affordable, production quality voice data for developing new speech conversion algorithms. I have developed a speech synthesis pipeline which learns high-level speech descriptors  and extracts speaker representation allowing speaker conversion. This framework aims to obtains significantly high similarity and naturalness to human voice. 
 
 
 
