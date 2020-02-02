@@ -36,6 +36,7 @@ import argparse
 
 from speech2speech.data_preprocessing.load_data import *
 from speech2speech.models.model import Model
+from speech2speech.models.training_utils import *
 
 #import yaml
 
@@ -148,6 +149,7 @@ if args.verbose:
 ###############################################################################
 #              Create model and optimizer
 #
+# Initialize model
 model = Model(args.num_hiddens, args.num_residual_layers, args.num_residual_hiddens,
               args.num_embeddings, args.embedding_dim,
               args.commitment_cost, speaker_dic, args.speaker_embedding_dim, args.decay).to(device)
@@ -155,7 +157,8 @@ model = Model(args.num_hiddens, args.num_residual_layers, args.num_residual_hidd
 if args.verbose:
     print("Initialized model...")
     sys.stdout.flush()
-
+    
+# Initialize optimizer
 optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, amsgrad=False)
 
 if args.verbose:
@@ -165,3 +168,8 @@ if args.verbose:
 ###############################################################################
 #              Train model
 #
+train_model(model, optimizer, args.num_epochs, training_loader)
+
+if args.verbose:
+    print("Model trained.")
+    sys.stdout.flush()

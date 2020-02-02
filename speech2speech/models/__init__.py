@@ -7,3 +7,4 @@ from speech2speech.models.decoder import *
 from speech2speech.models.encoder import *
 from speech2speech.models.model import *
 from speech2speech.models.vector_quantizer import *
+from speech2speech.models import training_utils
