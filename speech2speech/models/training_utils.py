@@ -38,7 +38,7 @@ def train_model(model, optimizer, num_epochs, training_loader):
             
             # forward pass
             vq_loss, data_recon, perplexity = model(batch_X)
-            ) 
+             
             recon_error = F.mse_loss(data_recon, x.cuda()) / std
             loss = recon_error + vq_loss
             
