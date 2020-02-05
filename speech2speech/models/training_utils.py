@@ -45,8 +45,10 @@ def train_model(model, optimizer, num_epochs, training_loader, device, checkpoin
                 print ("Epoch[{}/{}], Step [{}/{}], recon_error: {:.4f}, perplexity: {:.4f}"
                    .format(epoch+1, num_epochs, i+1, len(training_loader), recon_error.item(), perplexity.item()))
 
-        state = {'epoch': epoch + 1, 'state_dict': model.state_dict(),
-         'optimizer': optimizer.state_dict() }
+        state = {'epoch': epoch + 1,
+                 'state_dict': model.state_dict(),
+                 'optimizer': optimizer.state_dict(),
+                  'model_params_dict': model_params_dict }
         torch.save(state, os.path.join(checkpoint_dir,'checkpoint_state_dict_{}'.format(epoch+1)))
 
         train_res_recon_error.append(recon_error.item())
@@ -62,13 +64,14 @@ def load_checkpoint(model, optimizer, filename):
         checkpoint = torch.load(filename)
         start_epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['state_dict'])
+        model_params_dict = checkpoint['model_params_dict']
         optimizer.load_state_dict(checkpoint['optimizer'])
         print("=> loaded checkpoint '{}' (epoch {})"
                   .format(filename, checkpoint['epoch']))
     else:
         print("=> no checkpoint found at '{}'".format(filename))
 
-    return model, optimizer, start_epoch
+    return model_params_dict, model, optimizer, start_epoch
 
 
 def eval_model(model, training_loader, device, checkpoint_dir):

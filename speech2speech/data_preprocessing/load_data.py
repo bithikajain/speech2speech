@@ -39,7 +39,7 @@ def spectrograms_to_torch_dataset(files_np, max_col):
         x[:load_x.shape[0], :c] = load_x[:, :c]
 
         x = torch.tensor(x, device='cpu').float()
-        trial_y = file.split('trim_spec_p')[1][:3]
+        trial_y = file[0].split('/p')[1][:3]
         trial_y = torch.tensor(int(trial_y), device='cpu').float()
         X_list.append(x)
         Y_list.append(trial_y)
