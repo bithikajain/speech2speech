@@ -57,7 +57,7 @@ class Model(nn.Module):
             print('output_features_size', output_features_size)
             sys.stdout.flush()
 
-        x_recon = x_recon.view(-1, 1025, output_features_size)
+        x_recon = x_recon.view(-1, 1025, output_features_size)#1025 #257
         x_recon = x_recon[:, :, :-(output_features_size - input_features_size)]
         if self.debug:
             print('x_recon size', x_recon.size())

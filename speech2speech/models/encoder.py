@@ -22,7 +22,7 @@ class Encoder(nn.Module):
         and residual connections.
         """
 
-        self._conv_1 = nn.Conv1d(in_channels=1025,  # ??features_filters,
+        self._conv_1 = nn.Conv1d(in_channels=1025, #257,#1025,  # ??features_filters,
                                  out_channels=num_hiddens,
                                  kernel_size=3,
                                  padding=1)
