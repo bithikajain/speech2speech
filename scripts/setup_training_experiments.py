@@ -27,25 +27,25 @@ python /home/ubuntu/speech2speech/scripts/train_model.py --verbose --debug\
 ## .. CHANGE THIS STUFF ONLY ..
 ############################################
 code_base_dir  = '/home/ubuntu/speech2speech/'
-training_exp_name = 'training_exp_00' ## CHANGE THIS EVERY TIME
+training_exp_name = 'training_exp_original_dat_00' ## CHANGE THIS EVERY TIME
 
 # All option choices for the script
 choices = {}
-choices['--data_dir'] = ['/home/ubuntu/speech2speech/data/raw/VCTK-Corpus']
+choices['--data-dir'] = ['/home/ubuntu/speech2speech/data/raw/VCTK-Corpus']
 choices['--spectrogram-dir'] = [\
     '/home/ubuntu/speech2speech/data/interim/spectogram_array_trim_30db',\
     '/home/ubuntu/speech2speech/data/interim/spectogram_array_path_trim_30db_ntft_512']
 
-choices['--time-length'] = [100, 350]
+choices['--time-length'] = [50,100]
 choices['--train-data-fraction'] = [0.8]
 choices['--validation-data-fraction'] = [0.1]
-choices['--num-epochs'] = [10]
+choices['--num-epochs'] = [20]
 choices['--batch-size'] = [10,40]
 choices['--num-hiddens'] = [768]
 choices['--num-residual-hiddens'] = [32]
 choices['--num-residual-layers'] = [2]
 choices['--embedding-dim'] = [64]
-choices['--num-embeddings'] = [256]
+choices['--num-embeddings'] = [300]
 choices['--speaker-embedding-dim'] = [20]
 choices['--commitment-cost'] = [0.25]
 choices['--decay'] = [0]
@@ -66,7 +66,7 @@ choices_to_vary = ['--batch-size', '--time-length'] #change this everytime
 ############################################
 def get_all_combinations_from_two_lists(list1, list2):
     #print(' --- func begins ---')
-    list1_permutations = itertools.permutations(list1, len(list1))
+    list1_permutations = itertools.permutations(list1, 1)
     all_combinations = []
     for each_permutation in list1_permutations:
         #print(each_permutation)
