@@ -36,7 +36,7 @@ choices['--spectrogram-dir'] = [\
     '/home/ubuntu/speech2speech/data/interim/spectogram_array_trim_30db',\
     '/home/ubuntu/speech2speech/data/interim/spectogram_array_path_trim_30db_ntft_512']
 
-choices['--time-length'] = [50,100]
+choices['--time-length'] = [50,100, 150]
 choices['--train-data-fraction'] = [0.8]
 choices['--validation-data-fraction'] = [0.1]
 choices['--num-epochs'] = [20]
@@ -45,13 +45,13 @@ choices['--num-hiddens'] = [768]
 choices['--num-residual-hiddens'] = [32]
 choices['--num-residual-layers'] = [2]
 choices['--embedding-dim'] = [64]
-choices['--num-embeddings'] = [300]
+choices['--num-embeddings'] = [256, 300]
 choices['--speaker-embedding-dim'] = [20]
 choices['--commitment-cost'] = [0.25]
 choices['--decay'] = [0]
 choices['--learning-rate'] = [1e-4]
 
-choices_to_vary = ['--batch-size', '--time-length'] #change this everytime
+choices_to_vary = ['--batch-size', '--time-length', '--num-embeddings'] #change this everytime
 
 
 
