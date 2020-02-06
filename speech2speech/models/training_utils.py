@@ -41,15 +41,15 @@ def train_model(model, optimizer, num_epochs, training_loader, device, checkpoin
             optimizer.step()
             epoch_loss += loss.item()
 
-            if (i+1) % 10 == 0:
+            if (i+1) % 5 == 0:
                 print ("Epoch[{}/{}], Step [{}/{}], recon_error: {:.4f}, perplexity: {:.4f}"
                    .format(epoch+1, num_epochs, i+1, len(training_loader), recon_error.item(), perplexity.item()))
-
+        torch.save(model, os.path.join(checkpoint_dir, 'checkpoint_model_{}.pth'.format(epoch+1)))
         state = {'epoch': epoch + 1,
                  'state_dict': model.state_dict(),
                  'optimizer': optimizer.state_dict(),
-                  'model_params_dict': model_params_dict }
-        torch.save(state, os.path.join(checkpoint_dir,'checkpoint_state_dict_{}'.format(epoch+1)))
+		 'model_parameters': model.named_parameters() }
+        torch.save(state, os.path.join(checkpoint_dir,'checkpoint_state_dict_{}.pth'.format(epoch+1)))
 
         train_res_recon_error.append(recon_error.item())
         train_res_perplexity.append(perplexity.item())
