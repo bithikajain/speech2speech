@@ -80,42 +80,42 @@ def get_all_combinations_from_two_lists(list1, list2):
 def get_fixed_choice_value(fixed_choice, choices):
     opts = choices[fixed_choice]
     return opts[0]
-    
+
 def get_script_strings(choices, code_base):
     # list of all different script contents
     out_strs = []
-    
+
     # Basic starting string for training scripts
-    basic_str = '''
-#!/usr/bin/env python
+    basic_str = '''\
+#!/usr/bin/env bash
 
 python {0}/scripts/train_model.py --verbose --debug\\
 '''.format(code_base)
-    
+
     all_choices = set(choices.keys())
     fixed_choices = all_choices - set(choices_to_vary)
-    
+
     for fixed_choice in fixed_choices:
         basic_str += '    '  + fixed_choice + ' ' + '{}'.format(\
             get_fixed_choice_value(fixed_choice, choices)) + '\\\n'
-    
+
     # Get combinations of all variable options
     all_option_string_combinations = []
     for variable_choice in choices_to_vary:
-        opts = choices[variable_choice]       
+        opts = choices[variable_choice]
         option_string_combinations = get_all_combinations_from_two_lists(opts, list([variable_choice]))
         all_option_string_combinations.append( option_string_combinations )
 
     # Now, for each option for variable choices, write a completely
     # new script string
-    for option_combos in itertools.product(*all_option_string_combinations): 
-        out_str = basic_str       
+    for option_combos in itertools.product(*all_option_string_combinations):
+        out_str = basic_str
         for option_combo in option_combos:
             out_str += '    '  + option_combo[0][1] + ' ' + '{}'.format(option_combo[0][0]) + '\\\n'
-        
+
         # Append to main list storing different script strings
         out_strs.append(out_str)
-    
+
     return out_strs
 
 
@@ -124,7 +124,7 @@ python {0}/scripts/train_model.py --verbose --debug\\
 ############################################
 
 train_base_dir            = '{}/training/{}/'.format(code_base_dir, training_exp_name)
-training_scripts_base_dir = '{}/scripts/{}/'.format(code_base_dir, training_exp_name)    
+training_scripts_base_dir = '{}/scripts/{}/'.format(code_base_dir, training_exp_name)
 
 # Make required directories
 dirs_to_make = [train_base_dir, training_scripts_base_dir]
@@ -135,26 +135,25 @@ for d in dirs_to_make:
     except: pass
 
 
-    
+
 ############################################
 ## ------- Write out scripts -----
 ############################################
 for idx, script_str in enumerate(get_script_strings(choices, code_base_dir)):
-    
+
     print("Setting up test {}".format(idx))
-    
+
     # Name of script and output dir for this training experiment
     out_dir = 'test_{:02d}'.format(idx)
-    script_name = os.path.join(training_scripts_base_dir, out_dir) + '.py'
-    
+    script_name = os.path.join(training_scripts_base_dir, out_dir) + '.sh'
+
     new_base_dir_path = os.path.join(train_base_dir, out_dir)
     # Create the new base dir
     try: os.makedirs(new_base_dir_path)
     except: pass
-    
+
     # Write run script for this training experiment
     with open(script_name, 'w') as fout:
         fout.write(script_str)
         fout.write('    --base-dir {}\n'.format(new_base_dir_path))
     os.system('chmod +x {}'.format(script_name))
-
