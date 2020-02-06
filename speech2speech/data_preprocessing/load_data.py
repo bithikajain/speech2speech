@@ -16,14 +16,15 @@ def spectrograms_to_torch(file, max_col):
     Generates torch tensors for the spectrogram array and return
     them as a dataset
     """
+    print(file)
     load_x = np.load(file)
-    x = np.zeros((load_x.shape[0], 100), dtype=np.float32)
-    c = min(100, load_x.shape[1])
+    x = np.zeros((load_x.shape[0], max_col), dtype=np.float32)
+    c = min(max_col, load_x.shape[1])
     x[:load_x.shape[0], :c] = load_x[:, :c]
     x = torch.tensor(x, device='cpu').float()
-    trial_y = file.split('/p')[1][:3]
+    trial_y = file.split('/')[-1][-11:-8]
     trial_y = torch.tensor(int(trial_y), device='cpu').float()
-    return x, trail_y
+    return x, trial_y
 
 def spectrograms_to_torch_dataset(files_np, max_col):
     """
@@ -39,7 +40,7 @@ def spectrograms_to_torch_dataset(files_np, max_col):
         x[:load_x.shape[0], :c] = load_x[:, :c]
 
         x = torch.tensor(x, device='cpu').float()
-        trial_y = file.split('trim_spec_p')[1][:3]#split('/p')[1][:3]
+        trial_y = file.split('/')[-1][-11:-8]#split('/p')[1][:3]
         trial_y = torch.tensor(int(trial_y), device='cpu').float()
         X_list.append(x)
         Y_list.append(trial_y)
