@@ -60,7 +60,7 @@ parser.add_argument('--data-dir', type=str,
                     default='/home/ubuntu/voice_conversion/data/raw/VCTK-Corpus', help='Input data directory (default: /home/ubuntu/voice_conversion/data/raw/VCTK-Corpus)')
 parser.add_argument('--spectrogram-dir', type=str, default='/home/ubuntu/voice_conversion/data/interim/spectogram_array_trim_30db',
                     help='Directory with spectrogram files (Default:/home/ubuntu/voice_conversion/data/interim/spectogram_array_trim_30db )')
-parser.add_argument('--time_length', type=int, default=50,
+parser.add_argument('--time-length', type=int, default=50,
                     help="Lenght of the time dimension for input spectrogram files (default: 50)")
 
 parser.add_argument('--train-data-fraction', type=float,
