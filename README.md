@@ -40,6 +40,7 @@ and modify `choices` near the top of the script as needed.
 
 ## Repo directory structure 
 The package is located in the `speech2speech` folder. 
+```
 speech2speech
 ├── README.md
 ├── __init__.py
@@ -87,7 +88,7 @@ speech2speech
     │   └── vector_quantizer.py
     └── postprocessing
         └── filter.py
-
+```
 
 ## Algortihm 
 The algorithm is based on Vector quantised variational autoencoder
