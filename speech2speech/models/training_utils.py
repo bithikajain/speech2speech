@@ -5,9 +5,11 @@ import os, sys
 import time
 import argparse
 import numpy as np
+import json
 import torch
 from torch.utils.data import DataLoader, Dataset
 import torch.nn.functional as F
+from speech2speech.models.model import Model
 
 def std_mean_dataloader(data_loader):
     mean = 0.
@@ -19,8 +21,44 @@ def std_mean_dataloader(data_loader):
 
     return std, mean
 
-
 def train_model(model, optimizer, num_epochs, training_loader, device, checkpoint_dir):
+    model.train()
+    train_res_recon_error = []
+    train_res_perplexity = []
+
+    std, _ = std_mean_dataloader(training_loader)
+    for i in xrange(num_training_updates):
+        (data, y) = next(iter(training_loader))
+        data = data.to(device)
+        optimizer.zero_grad()
+
+        speaker_ids = y.numpy()
+         
+        # forward pass
+        vq_loss, data_recon, perplexity = model(data, speaker_ids)
+   
+        recon_error = F.mse_loss(data_recon, data) / std
+        loss = recon_error + vq_loss
+        loss.backward()
+
+        optimizer.step()
+    
+        train_res_recon_error.append(recon_error.item())
+        train_res_perplexity.append(perplexity.item())
+
+        if (i+1) % 100 == 0:
+            print('%d iterations' % (i+1))
+            print('recon_error: %.3f' % np.mean(train_res_recon_error[-100:]))
+            print('perplexity: %.3f' % np.mean(train_res_perplexity[-100:]))
+            print()
+        if (i+1) % 10000 == 0:
+            obj={"model_state_dict": model.state_dict(), 
+                "optimizer_state_dict": optimizer.state_dict()}
+            torch.save(obj, os.path.join(checkpoint_dir,'checkpoint_state_dict_{}.pth'.format(i+1)))
+
+    return train_res_recon_error, train_res_perplexity
+
+def train_model_epochs(model, optimizer, num_epochs, training_loader, device, checkpoint_dir):
     model.train()
     train_res_recon_error = []
     train_res_perplexity = []
@@ -64,23 +102,77 @@ def load_checkpoint(model, optimizer, filename):
         checkpoint = torch.load(filename)
         start_epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['state_dict'])
-        model_params_dict = checkpoint['model_params_dict']
         optimizer.load_state_dict(checkpoint['optimizer'])
         print("=> loaded checkpoint '{}' (epoch {})"
                   .format(filename, checkpoint['epoch']))
     else:
         print("=> no checkpoint found at '{}'".format(filename))
 
-    return model_params_dict, model, optimizer, start_epoch
+    return model, optimizer, start_epoch
 
-
+def load_model(load_path, model_config_path, device):
+    """
+    Instantiate the model from saved dictionary of pretrained model.
+    
+    Returns:
+        The instantiated model with the requested parameters.
+    """
+    
+    ckpt = torch.load(load_path, map_location=device) 
+    model_config = json.load(open(model_config_path, 'r'))
+    model = Model(model_config['num_hiddens'],
+                  model_config['num_residual_layers'],
+                  model_config['num_residual_hiddens'],
+                  model_config['num_embeddings'],
+                  model_config['embedding_dim'],
+                  model_config['commitment_cost'],
+                  model_config['speaker_dic'],
+                  model_config['speaker_embedding_dim'],
+                  model_config['decay'], device).to(device)
+    model.load_state_dict(ckpt['state_dict'])
+     # transfer model to cpu or gpu
+    model = model.to(device=device)
+    
+    return model
+    
+    
 def eval_model(model, training_loader, device, checkpoint_dir):
+    model.eval() # enter evaluation mode
+    eval_res_recon_error = []
+    eval_res_perplexity = []
+    epoch_loss = 0
+    std, _ = std_mean_dataloader(validation_loader)
+    with torch.no_grad():
+        for i in xrange(num_training_updates):
+            std, _ = std_mean_dataloader(validation_loader)
+            (data, y) = next(iter(validation_loader))
+            data = data.to(device)
+            speaker_ids = y.numpy()
+            # zero the parameter gradients
+            optimizer.zero_grad()
+            # forward + backward + optimize
+            vq_loss, data_recon, perplexity = model(data, speaker_ids)
+            
+            recon_error = F.mse_loss(data_recon, data) / std
+            loss = recon_error + vq_loss
+                
+        
+            eval_res_recon_error.append(recon_error.item())
+            eval_res_perplexity.append(perplexity.item())
+                if (i+1) % 100 == 0:
+                    print('%d iterations' % (i+1))
+                    print('recon_error: %.3f' % np.mean(eval_res_recon_error[-100:]))
+                    print('perplexity: %.3f' % np.mean(eval_res_perplexity[-100:]))
+                    print()
+    return eval_res_recon_error, eval_res_perplexity
+
+def eval_model_epoch(model, training_loader, device, checkpoint_dir):
     model.eval() # enter evaluation mode
     val_res_recon_error = []
     val_res_perplexity = []
-    epoch_loss = 0
+    
     with torch.no_grad():
-        for epoch in range(num_epochs):
+        for i in xrange(num_training_updates):
             std, _ = std_mean_dataloader(validation_loader)
             for i, (x, _) in enumerate(validation_loader):
                 batch_X = x.to(device)

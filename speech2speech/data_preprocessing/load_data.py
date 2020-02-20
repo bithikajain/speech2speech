@@ -7,9 +7,45 @@ import glob
 import argparse
 import numpy as np
 import torch
+import librosa
 from torch.utils.data import DataLoader, Dataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+def spectrogram_to_audio(data, data_recon, output_dir):
+    data_np = (data.squeeze(0).to(torch.device("cpu"))).detach().numpy();
+    data_griffin_lim = librosa.griffinlim(data_np)
+    data_recon_np = (data_recon.squeeze(0).to(torch.device("cpu"))).detach().numpy();
+    data_recon_griffin_lim = librosa.griffinlim(data_recon_np)    
+    
+    source_aud_path = output_dir + '_input_' + '.wav'
+    target_aud_path = output_dir + '_output_' + '.wav'
+    
+    librosa.output.write_wav(source_aud_path,data_griffin_lim, 16000)
+    librosa.output.write_wav(target_aud_path,data_recon_griffin_lim, 16000)
+    return source_aud_path, target_aud_path
+
+def spectrogram_to_audio_db(data, data_recon, output_dir):
+    data_np = (data.squeeze(0).to(torch.device("cpu"))).detach().numpy();
+    data_np = librosa.db_to_amplitude(data_np)
+    data_griffin_lim = librosa.griffinlim(data_np)
+    data_recon_np = (data_recon.squeeze(0).to(torch.device("cpu"))).detach().numpy();
+    data_recon_np = librosa.db_to_amplitude(data_recon_np)
+    data_recon_griffin_lim = librosa.griffinlim(data_recon_np)    
+    
+    source_aud_path = output_dir + '_input_' + '.wav'
+    target_aud_path = output_dir + '_output_' + '.wav'
+    
+    librosa.output.write_wav(source_aud_path,data_griffin_lim, 16384)
+    librosa.output.write_wav(target_aud_path,data_recon_griffin_lim, 16384)
+    return source_aud_path, target_aud_path
+    
+
+def audio_to_spectogram(audio_file):
+    samples, sample_rate = librosa.load(audio_file, sr = 16384)
+    audio_name = audio_file.split('trim_silence_30db')[1].split('/')[-1].split('.')[0]
+    X = np.abs(librosa.stft(samples, ntft = 512))
+    return X
 
 def spectrograms_to_torch(file, max_col):
     """

@@ -76,8 +76,7 @@ class Decoder(nn.Module):
             print('shape of inputs in Decoder.forward', inputs.size())
             sys.stdout.flush()
 
-        lookup_tensor = torch.tensor(
-            [speaker_dic[speaker_id]], dtype=torch.long).to(self.device)
+        lookup_tensor = torch.tensor([speaker_dic[str(int(i))] for i in speaker_id], dtype=torch.long).to(device)
         if self.debug:
             print(
                 'shape of lookup_tensor in Decoder.forward',
@@ -93,7 +92,7 @@ class Decoder(nn.Module):
         if self.debug:
             print("unqueezed spk_emb", spk_emb.size())
             sys.stdout.flush()
-        spk_emb = spk_emb.repeat(inputs.size(0), 1, inputs.size(2))
+        spk_emb = spk_emb.repeat(1, 1, inputs.size(2))
         if self.debug:
             print("spk_emb repeated along time and batch ", spk_emb.size())
             sys.stdout.flush()
